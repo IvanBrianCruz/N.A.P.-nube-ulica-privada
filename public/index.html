@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAP - Nube Aúlica Privada</title>
+    <!-- Enlace a Bootstrap -->
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <link href="./css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/font-awesome.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header py-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <img src="./img/secu68.png" alt="Logo 1" class="logo">
+            <h1 class="text-center">NAP - Nube Aúlica Privada</h1>
+            <img src="./img/atlas.png" alt="Logo 2" class="logo">
+        </div>
+    </header>
+
+    <div class="container mt-4">
+        <h2 class="text-center my-4">Gestión de Archivos</h2>
+
+        <!-- Subida de Archivos -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Subir un archivo</h5>
+                <form id="uploadForm" class="form-inline">
+                    <div class="form-group mb-2">
+                        <label for="file" class="sr-only">Archivo</label>
+                        <input type="file" id="file" name="file" class="form-control-file">
+                    </div>
+                    <button type="submit" class="btn btn-primary mb-2 ml-sm-2">Subir Archivo</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Lista de Archivos -->
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Archivos Disponibles</h5>
+                <div class="file-list">
+                    <ul id="fileList" class="list-group"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   
+   <!-- Footer -->
+<footer class="text-center bg-dark text-white py-4">
+    <p>Hecho por <strong>Atlas</strong> | Desarrollado por <strong>Cruz Iván Brian - Full Stack Tech Developer</strong> | 2024</p>
+    <p>Secu 68</p>
+    <div class="d-flex justify-content-center align-items-center">
+        <img src="./img/secu68.png" alt="Logo Secu 68" style="width: 50px; height: 50px; margin-right: 10px;">
+        <img src="./img/atlas.png" alt="Logo Atlas" style="width: 50px; height: 50px;">
+    </div>
+</footer>
+
+
+    <!-- Enlace a Bootstrap JS y dependencias -->
+    <script src="./js/jquery-3.5.1.slim.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+
+    <script>
+        // Mapeo de extensiones a íconos
+        const fileIcons = {
+            'pdf': '📄',
+            'jpg': '🖼️',
+            'png': '🖼️',
+            'gif': '🖼️',
+            'txt': '📃',
+            'doc': '📄',
+            'docx': '📄',
+            'xlsx': '📊',
+            'zip': '🗜️',
+            'mp3': '🎵',
+            'mp4': '🎞️',
+            'default': '📁'
+        };
+
+        // Función para obtener el ícono de un archivo
+        function getFileIcon(extension) {
+            return fileIcons[extension] || fileIcons['default'];
+        }
+
+        // Función para actualizar la lista de archivos
+        function updateFileList() {
+            fetch('/files')
+                .then(response => response.json())
+                .then(files => {
+                    const fileList = document.getElementById('fileList');
+                    fileList.innerHTML = '';
+                    files.forEach(file => {
+                        const li = document.createElement('li');
+                        li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
+                        
+                        const fileIcon = getFileIcon(file.extension);
+                        
+                        li.innerHTML = `
+                            <div class="d-flex align-items-center">
+                                <span class="file-icon">${fileIcon}</span>
+                                <a href="/download/${file.name}">${file.name}</a>
+                            </div>
+                            <span>${file.size}</span>
+                        `;
+                        
+                        fileList.appendChild(li);
+                    });
+                });
+        }
+
+        // Llama a la función al cargar la página
+        updateFileList();
+
+        // Manejar la subida de archivos
+        const form = document.getElementById('uploadForm');
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('file');
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+                updateFileList();  // Actualiza la lista después de subir
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>

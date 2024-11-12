@@ -1,0 +1,17 @@
+{
+  "name": "nube-local",
+  "version": "1.0.0",
+  "description": "Proyecto Nube Aúlica Privada",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "Cruz Iván Brian",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.0",
+    "multer": "^1.4.5-lts.1",
+    "nube-local": "file:"
+  }
+}
